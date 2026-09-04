@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic
+psycopg[binary,pool]
+pgvector
+mistralai
+rapidfuzz
+python-dotenv
+pydantic_settings

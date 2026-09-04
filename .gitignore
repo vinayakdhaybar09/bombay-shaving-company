@@ -1,0 +1,5 @@
+.env
+venv
+assets
+.DS_Store
+__pycache__
