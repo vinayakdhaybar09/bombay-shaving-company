@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS product_embeddings (
     key_ingredients TEXT[],
     short_benefit_summary TEXT,
     searchable_text TEXT,
-    embedding VECTOR(384)
+    embedding VECTOR(1024)
 );
 
 CREATE INDEX IF NOT EXISTS idx_product_embeddings_vec
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS blog_chunks (
     blog_url TEXT,
     heading TEXT,
     content TEXT,
-    embedding VECTOR(384)
+    embedding VECTOR(1024)
 );
 
 CREATE INDEX IF NOT EXISTS idx_blog_chunks_vec
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS company_knowledge (
     entry_type TEXT NOT NULL,   -- 'faq' | 'policy' | 'contact'
     question TEXT,
     answer TEXT NOT NULL,
-    embedding VECTOR(384)
+    embedding VECTOR(1024)
 );
 
 CREATE INDEX IF NOT EXISTS idx_company_knowledge_vec
