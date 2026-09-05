@@ -71,6 +71,7 @@ CREATE INDEX IF NOT EXISTS idx_blog_chunks_vec
 CREATE TABLE IF NOT EXISTS company_knowledge (
     id SERIAL PRIMARY KEY,
     entry_type TEXT NOT NULL,   -- 'faq' | 'policy' | 'contact'
+    category TEXT,
     question TEXT,
     answer TEXT NOT NULL,
     embedding VECTOR(1024)

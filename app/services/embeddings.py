@@ -1,24 +1,30 @@
-from psycopg.rows import dict_row
-from mistralai import Mistral
+import time
+from mistralai.client import Mistral
 
 from app.config import settings
 from app.services.db import pool
 
 _client = Mistral(api_key=settings.mistral_api_key)
+_EMBED_MODEL = settings.embedding_model
+_BATCH_SIZE = 64
 
 def embed_text(text: str) -> list[float]:
-    response = _client.embeddings.create(
-        model=settings.embedding_model,
-        inputs=[text]
-    )
-    return response.data[0].embedding
+    return embed_batch([text])[0]
 
-def embed_batch(texts: list[str])-> list[list[float]]:
-    response = _client.embeddings.create(
-        model=settings.embedding_model,
-        input="texts"
-    )
-    return [item.embedding for item in response.data]
+def embed_batch(texts: list[str], max_retries: int = 3)-> list[list[float]]:
+    all_vectors: list[list[float]] = []
+    for i in range(0, len(texts), _BATCH_SIZE):
+        chunk = texts[i : i + _BATCH_SIZE]
+        for attempt in range(max_retries):
+            try:
+                response = _client.embeddings.create(model=_EMBED_MODEL, inputs=chunk)
+                all_vectors.extend([d.embedding for d in response.data])
+                break
+            except Exception:
+                if attempt == max_retries - 1:
+                    raise
+                time.sleep(2 ** attempt)
+    return all_vectors
 
 def search_products(query_embedding: list[float], top_k: int = 15) -> list[dict]:
     with pool.connection() as conn:
